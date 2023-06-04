@@ -60,3 +60,202 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+
+
+
+
+
+
+model Colaborador {
+  id                Int      @id @default(autoincrement())
+  fullName          String   @map(name: "full_name")
+  funcaoPrincipal   Int      @default(0) @map(name: "funcao_principal")     // 0 = CHG, 1 = VCF, 2 = VMOT, 3 = VMOT_CARRETEIRO
+  todasFuncoes      Int[]    @default([]) @map(name: "funcoes_secundarias") // 0 = CHG, 1 = VCF, 2 = VMOT
+  tags              String[] @default([])                                   // Inclui curso mopp, carreteiro, portador, etc.
+  statusTrabalho    Int      @default(0) @map(name: "status_trabalho")      // 0 = ocioso, 1 = missão, 2 = folga
+}
+
+model Analise {
+  id          Int    @id @default(autoincrement())
+  dataCriacao String @map(name: "data_criacao")
+}
+
+model AnaliseColaborador {
+  id             Int @id @default(autoincrement())
+  idAnalise      Int @map(name: "id_analise")
+  idColaborador  Int @map(name: "id_colaborador")
+  idRota         Int @map(name: "id_rota")
+  funcao         String
+  horasExtra     Int @map(name: "horas_extra")
+  horasAdiantada Int @map(name: "horas_adiantada")
+  custoTotal     String @map(name: "custo_total")
+}
+
+model MontagemGuarnicao {
+  id               Int     @id @default(autoincrement())
+  data_guarnicao   String?
+  rota             String?
+  horario_escala   String?
+  jornada          String?
+  cf               String?
+  chg              String?
+  vmot             String?
+  gcf1             String?
+  gcf2             String?
+  semana_inicio    String?
+  semana_fim       String?
+  escala_chefe     String?
+  escala_motorista String?
+  escala_guarda1   String?
+  escala_guarda2   String?
+  cf_ajustado      String?
+  chg_ajustado     String?
+  vmot_ajustado    String?
+  gcf_ajustado     String?
+  gcf2_ajustado    String?
+
+  @@map(name: "montagem_guarnicao")
+}
+
+model MonitoramentoGlobal {
+  id                   Int       @id @default(autoincrement())
+  Data                 DateTime?
+  Rota                 String?
+  Escala               String?
+  SaidaBase            DateTime?
+  CF                   String?
+  CHG                  String?
+  VMOT                 String?
+  VCF                  String?
+  Missao               String    @unique
+  StatusObservacoes    String?
+  TipoServico          String?
+  UF                   String?
+  Cliente              String?
+  Produto              String?
+  Segmento             String?
+  Movix                String?
+  ChegadaDestino       DateTime?
+  TerminoDestino       DateTime?
+  ChegadaBase          DateTime?
+  AlmocoInicio         DateTime?
+  AlmocoFim            DateTime?
+  TerminoMissao        DateTime?
+  LimiteMinHrAlmoco    DateTime?
+  LimiteMaxHrAlmoco    DateTime?
+  HorarioLimiteJornada DateTime?
+  TotalJornada         DateTime?
+  StatusJornada        String?
+  ObservacoesExtras    String?
+  Refeicao             String?
+  Jornada              String?
+  Operacao             String?
+
+  @@map(name: "monitoramento_geral")
+}
+
+model MdmGeral {
+  id                Int    @id @default(autoincrement())
+  execucao          String
+  parametro         String
+  valor             String
+  referencia        String
+  idHCCategoria     String @map(name: "id_hc_categoria")
+  HcCategorias      Int    @map(name: "hc_categorias")
+  idHcRegime        Int    @map(name: "id_hc_regime")
+  hcRegimes         String @map(name: "hc_regimes")
+  minutosDia        Int    @map(name: "minutos_dia")
+  duracaoFolga      Int    @map(name: "duracao_folga")
+  maximoEntreFolgas Int    @map(name: "maximo_entre_folgas")
+  idDataTipo        Int    @map(name: "id_data_tipo")
+  dataTipo          String @map(name: "data_tipo")
+  idHcStatus        Int    @map(name: "id_hc_status")
+  hcStatus          String @map(name: "hc_status")
+
+  @@map(name: "mdm_geral")
+}
+
+model MdmCalendario {
+  id           Int    @id @default(autoincrement())
+  data         String
+  hora         String
+  ref90Dias    Float  @map(name: "ref90_dias")
+  ref90Minutos Float  @map(name: "ref90_minutos")
+  periodo      String
+  diaDaSemana  Int    @map(name: "dia_da_semana")
+  tipoMomento  Int    @map(name: "tipo_momento")
+
+  @@map(name: "mdm_calendario")
+}
+
+model MdmColaborador {
+  id          Int @id @default(autoincrement())
+  categoria   Int
+  regimeAtual Int @map(name: "regime_atual")
+
+  @@map(name: "mdm_colaborador")
+}
+
+model MdmCrew {
+  id        Int @id @default(autoincrement())
+  chefe     Int
+  motorista Int
+  vg1       Int
+  vg2       Int
+
+  @@map(name: "mdm_crew")
+}
+
+model CrewInicial {
+  id        Int @id @default(autoincrement())
+  idCrew    Int @map(name: "id_crew")
+  chefe     Int
+  motorista Int
+  vg1       Int
+  vg2       Int
+
+  @@map(name: "crew_inicial")
+}
+
+model MdmRota {
+  id            Int @id @default(autoincrement())
+  duracao       Int
+  horarioMinimo Int @map(name: "horario_minimo")
+  horarioMaximo Int @map(name: "horario_maximo")
+  semanal       Int
+  diaSemana     Int @map(name: "dia_semana")
+  diario        Int
+
+  @@map(name: "mdm_rota")
+}
+
+model FatoEvento {
+  id                   Int    @id @default(autoincrement())
+  idColaborador        Int    @map(name: "id_colaborador")
+  status               Int
+  minimoTempoAlteracao String @map(name: "minimo_tempo_alteracao")
+
+  @@map(name: "fato_evento")
+}
+
+model FatoColaborador {
+  id             Int      @id @default(autoincrement())
+  idColaborador  Int      @map(name: "id_colaborador")
+  ultimaCrew     Int
+  status         Int
+  ultimoDescanso DateTime
+  ultimaFolga    DateTime
+
+  @@map(name: "fato_colaborador")
+}
+
+model FatoMissao {
+  id       Int    @id @default(autoincrement())
+  idRota   Int    @map(name: "id_rota")
+  tipoRota Int    @map(name: "tipo_rota")
+  randRota Float  @map(name: "rand_rota")
+  periodo  String
+
+  @@map(name: "fato_missao")
+}
